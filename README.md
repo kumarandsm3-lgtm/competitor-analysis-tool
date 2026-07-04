@@ -1,36 +1,16 @@
 # AI Competitor Analysis Tool
 
-AI Competitor Analysis Tool is a Spring Boot backend project that compares two competing apps and generates a structured competitor analysis report.
+A full-stack AI-powered competitor analysis platform built using **Spring Boot, MySQL, React, and Gemini AI**.
 
-## Tech Stack
+This tool compares two competing apps or companies, identifies product gaps, analyzes UX, business model, target users, and generates strategic product recommendations using AI.
 
-- Java 17
-- Spring Boot
-- Spring Data JPA
-- MySQL
-- REST API
-- Postman
-- Gemini AI API - upcoming
+---
 
-## Features
+## 🚀 Project Overview
 
-- Generate competitor analysis report
-- Compare two apps such as Swiggy vs Zomato
-- Save analysis details in MySQL
-- View all saved reports
-- View report by ID
+The AI Competitor Analysis Tool helps product teams, founders, and business analysts quickly compare two competitors.
 
-## API Endpoints
-
-### Test API
-
-GET http://localhost:8080/test
-
-### Generate Analysis
-
-POST http://localhost:8080/api/analysis/generate
-
-Request body:
+Example:
 
 ```json
 {
