@@ -4,6 +4,7 @@ import com.kumaran.competitoranalysistool.dto.AnalysisRequest;
 import com.kumaran.competitoranalysistool.dto.AnalysisResponse;
 import com.kumaran.competitoranalysistool.entity.AnalysisReport;
 import com.kumaran.competitoranalysistool.entity.CompetitorAnalysis;
+import com.kumaran.competitoranalysistool.exception.ResourceNotFoundException;
 import com.kumaran.competitoranalysistool.repository.AnalysisReportRepository;
 import com.kumaran.competitoranalysistool.repository.CompetitorAnalysisRepository;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class AnalysisService {
         AnalysisResponse aiResponse = geminiService.generateCompetitorReport(request);
 
         AnalysisReport report = new AnalysisReport();
+
         report.setWinner(aiResponse.getWinner());
         report.setCoreFeatures(aiResponse.getCoreFeatures());
         report.setUxDesign(aiResponse.getUxDesign());
@@ -60,8 +62,7 @@ public class AnalysisService {
         List<AnalysisResponse> responses = new ArrayList<>();
 
         for (AnalysisReport report : reports) {
-            AnalysisResponse response = convertToResponse(report);
-            responses.add(response);
+            responses.add(convertToResponse(report));
         }
 
         return responses;
@@ -70,9 +71,25 @@ public class AnalysisService {
     public AnalysisResponse getReportById(Long id) {
 
         AnalysisReport report = analysisReportRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Report not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));
 
         return convertToResponse(report);
+    }
+
+    public String deleteReportById(Long id) {
+
+        AnalysisReport report = analysisReportRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));
+
+        CompetitorAnalysis analysis = report.getCompetitorAnalysis();
+
+        analysisReportRepository.delete(report);
+
+        if (analysis != null) {
+            competitorAnalysisRepository.delete(analysis);
+        }
+
+        return "Report deleted successfully with id: " + id;
     }
 
     private AnalysisResponse convertToResponse(AnalysisReport report) {

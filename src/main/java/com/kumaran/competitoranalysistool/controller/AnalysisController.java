@@ -3,6 +3,7 @@ package com.kumaran.competitoranalysistool.controller;
 import com.kumaran.competitoranalysistool.dto.AnalysisRequest;
 import com.kumaran.competitoranalysistool.dto.AnalysisResponse;
 import com.kumaran.competitoranalysistool.service.AnalysisService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class AnalysisController {
     }
 
     @PostMapping("/generate")
-    public AnalysisResponse generateAnalysis(@RequestBody AnalysisRequest request) {
+    public AnalysisResponse generateAnalysis(@Valid @RequestBody AnalysisRequest request) {
         return analysisService.generateAnalysis(request);
     }
 
@@ -30,5 +31,10 @@ public class AnalysisController {
     @GetMapping("/{id}")
     public AnalysisResponse getReportById(@PathVariable Long id) {
         return analysisService.getReportById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteReportById(@PathVariable Long id) {
+        return analysisService.deleteReportById(id);
     }
 }

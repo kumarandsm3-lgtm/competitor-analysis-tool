@@ -1,9 +1,16 @@
 package com.kumaran.competitoranalysistool.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class AnalysisRequest {
 
+    @NotBlank(message = "App One is required")
     private String appOne;
+
+    @NotBlank(message = "App Two is required")
     private String appTwo;
+
+    @NotBlank(message = "Industry is required")
     private String industry;
 
     public AnalysisRequest() {
