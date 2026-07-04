@@ -76,6 +76,32 @@ public class AnalysisService {
         return convertToResponse(report);
     }
 
+    public List<AnalysisResponse> searchReports(String keyword) {
+
+        List<AnalysisReport> reports = analysisReportRepository.searchReports(keyword);
+
+        List<AnalysisResponse> responses = new ArrayList<>();
+
+        for (AnalysisReport report : reports) {
+            responses.add(convertToResponse(report));
+        }
+
+        return responses;
+    }
+
+    public List<AnalysisResponse> getLatestReports() {
+
+        List<AnalysisReport> reports = analysisReportRepository.findTop5ByOrderByCreatedAtDesc();
+
+        List<AnalysisResponse> responses = new ArrayList<>();
+
+        for (AnalysisReport report : reports) {
+            responses.add(convertToResponse(report));
+        }
+
+        return responses;
+    }
+
     public String deleteReportById(Long id) {
 
         AnalysisReport report = analysisReportRepository.findById(id)

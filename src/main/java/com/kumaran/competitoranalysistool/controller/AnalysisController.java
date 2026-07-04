@@ -28,6 +28,16 @@ public class AnalysisController {
         return analysisService.getAllReports();
     }
 
+    @GetMapping("/search")
+    public List<AnalysisResponse> searchReports(@RequestParam String keyword) {
+        return analysisService.searchReports(keyword);
+    }
+
+    @GetMapping("/latest")
+    public List<AnalysisResponse> getLatestReports() {
+        return analysisService.getLatestReports();
+    }
+
     @GetMapping("/{id}")
     public AnalysisResponse getReportById(@PathVariable Long id) {
         return analysisService.getReportById(id);
