@@ -16,11 +16,14 @@ public class AnalysisService {
 
     private final CompetitorAnalysisRepository competitorAnalysisRepository;
     private final AnalysisReportRepository analysisReportRepository;
+    private final GeminiService geminiService;
 
     public AnalysisService(CompetitorAnalysisRepository competitorAnalysisRepository,
-                           AnalysisReportRepository analysisReportRepository) {
+                           AnalysisReportRepository analysisReportRepository,
+                           GeminiService geminiService) {
         this.competitorAnalysisRepository = competitorAnalysisRepository;
         this.analysisReportRepository = analysisReportRepository;
+        this.geminiService = geminiService;
     }
 
     public AnalysisResponse generateAnalysis(AnalysisRequest request) {
@@ -32,44 +35,17 @@ public class AnalysisService {
 
         CompetitorAnalysis savedAnalysis = competitorAnalysisRepository.save(analysis);
 
+        AnalysisResponse aiResponse = geminiService.generateCompetitorReport(request);
+
         AnalysisReport report = new AnalysisReport();
-
-        report.setCoreFeatures(
-                request.getAppOne() + " has strong food delivery, offers, and quick commerce support. " +
-                        request.getAppTwo() + " has strong restaurant discovery, ratings, reviews, and food delivery experience."
-        );
-
-        report.setUxDesign(
-                request.getAppOne() + " focuses on fast ordering, offers, and convenience. " +
-                        request.getAppTwo() + " provides clean restaurant discovery, rating-based browsing, and smooth reorder flow."
-        );
-
-        report.setTargetUser(
-                request.getAppOne() + " targets users who want food delivery, grocery delivery, and quick convenience. " +
-                        request.getAppTwo() + " targets users who want restaurant discovery, food ordering, dining options, and trusted reviews."
-        );
-
-        report.setBusinessModel(
-                "Both apps make money through restaurant commissions, delivery fees, platform charges, ads, subscriptions, and partner promotions."
-        );
-
-        report.setGaps(
-                request.getAppOne() + " can improve personalized restaurant discovery and repeat-order experience. " +
-                        request.getAppTwo() + " can improve deeper grocery integration and food-plus-grocery bundle experiences."
-        );
-
-        report.setOpportunity(
-                "The best opportunity is to build a smart personalized reorder and bundle recommendation feature."
-        );
-
-        report.setStrategicRecommendation(
-                "The next big product bet should be personalized repeat ordering. " +
-                        "Many users order similar meals and essentials repeatedly. " +
-                        "By combining order history, grocery needs, offers, delivery speed, and preferred restaurants, " +
-                        "the app can improve user retention and increase order frequency."
-        );
-
-        report.setWinner("Tie");
+        report.setWinner(aiResponse.getWinner());
+        report.setCoreFeatures(aiResponse.getCoreFeatures());
+        report.setUxDesign(aiResponse.getUxDesign());
+        report.setTargetUser(aiResponse.getTargetUser());
+        report.setBusinessModel(aiResponse.getBusinessModel());
+        report.setGaps(aiResponse.getGaps());
+        report.setOpportunity(aiResponse.getOpportunity());
+        report.setStrategicRecommendation(aiResponse.getStrategicRecommendation());
         report.setCompetitorAnalysis(savedAnalysis);
 
         AnalysisReport savedReport = analysisReportRepository.save(report);
@@ -84,7 +60,8 @@ public class AnalysisService {
         List<AnalysisResponse> responses = new ArrayList<>();
 
         for (AnalysisReport report : reports) {
-            responses.add(convertToResponse(report));
+            AnalysisResponse response = convertToResponse(report);
+            responses.add(response);
         }
 
         return responses;
